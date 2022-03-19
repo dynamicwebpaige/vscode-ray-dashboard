@@ -5,20 +5,22 @@ export function flatten<T>(array: ReadonlyArray<T>[]): T[] {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-    context.subscriptions.push(vscode.commands.registerCommand('vscode-dask.connectToDaskSession', async (arg: string | undefined) => {
+    context.subscriptions.push(vscode.commands.registerCommand('ray.connectToDashboard', async (arg: string | undefined) => {
         if (arg === undefined) {
             const selection = await vscode.window.showInputBox({
-                title: 'Enter a Dask dashboard URL',
+                title: 'Enter a dashboard URL',
                 placeHolder: 'E.g. http://127.0.0.1:8787'
             });
     
-            if (!selection) return;
+            if (!selection) {
+				return;
+			}
             arg = selection;
         }
 
 		const panel = vscode.window.createWebviewPanel(
-			'vscode-dask',
-			'Dask',
+			'vscode-ray-dashboard',
+			'Ray',
 			vscode.ViewColumn.Beside,
 			{ retainContextWhenHidden: true, enableScripts: true }
 		);
@@ -30,12 +32,12 @@ export function activate(context: vscode.ExtensionContext) {
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline'; frame-src ${uri} http: https:;" >
-			<title>Dask</title>
+			<title>Ray</title>
 		</head>
 		<body>
 			<script type="text/javascript">
 				function resizeFrame() {
-					var f = window.document.getElementById('vscode-dask-iframe');
+					var f = window.document.getElementById('vscode-ray-iframe');
 					if (f) {
 						f.style.height = window.innerHeight;
 					}
@@ -44,7 +46,7 @@ export function activate(context: vscode.ExtensionContext) {
 				window.addEventListener('resize', resizeFrame);
 			</script>
 			<iframe
-				id="vscode-dask-iframe"
+				id="vscode-ray-iframe"
 				src="${uri}"
 				border="0px"
 				frameborder="0px"
